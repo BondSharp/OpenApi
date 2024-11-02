@@ -23,44 +23,35 @@
 
 ## Пример подключение библиотеки 
 ```C#
-var config = new ConfigurationBuilder()
-    .AddJsonFile("appsettings.json")
-    .AddEnvironmentVariables()
-    .Build();
-
-var host = Host.CreateDefaultBuilder(args)
-            .ConfigureServices((hostContext, services) =>
-            {
-                services
-                .AddAlorClient(config)
-                ;
-            }).Build();
-host.Start();
-
-var services =  host.Services;
+using BonadSharp.OpenApi.Core.AbstractServices;
+using BondSharp.OpenApi.Abstract;
+using BondSharp.OpenApi.Alor;
+using BondSharp.OpenApi.Domain.Instruments;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+var builder = Host.CreateApplicationBuilder(args);
+builder.Configuration.AddJsonFile("hostsettings.json");
+builder.AddAlor(builder.Configuration);
+using IHost host = builder.Build();
+await host.RunAsync();
 ```
 
-## Работа с rest
+## Получение инструмента 
 
 ```C#
-var alorClient = services.GetRequiredService<IAlorClient>();
-
-var sber = await alorClient.GetSecurities(TimeSpan.FromDays(1)).OfType<Share>().FirstAsync(x => x.Symbol == "SBER");
-
-await alorClient.GetHistoryDeals(sber, 5000, null).ToArrayAsync();
-await alorClient.GetHistoryDeals(sber, 1, null).FirstAsync(); 
-
-var allDeals = await alorClient.GetAllDeals(sber, 5000, null).ToArrayAsync();
-await alorClient.GetAllDeals(sber, 5000, allDeals.Last()).ToArrayAsync();
-
+var instrumentProvider = host.Services.GetRequiredService<IInstrumentsProvider>();
+var instrument = await instrumentProvider.All(TimeSpan.FromDays(1)).OfType<IShare>().FirstAsync(x => x.Symbol == "SBER");
 ```
 
 ## Маркер дата в реальном времени 
 
 ``` C#
-services.GetRequiredService<IMarkerDataBuilder>()
-    .OnOrderBook(sber,20,0)
-    .OnDeals(sber,20,0)
-    .Build()
-    .Subscribe(message=>Console.WriteLine(message), exception=> Console.WriteLine(exception.Message));
+using var dataMarket = host.Services
+    .GetRequiredService<IIDataMarketBuilder>()
+    .SubscribeDeal(instrument)
+    .SubscribeOrderBook(instrument)
+    .Build();
+
+dataMarket.Events.Subscribe(@event => Console.WriteLine(@event));
 ```
