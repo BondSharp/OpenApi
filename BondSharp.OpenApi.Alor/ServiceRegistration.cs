@@ -4,8 +4,10 @@ using BonadSharp.OpenApi.Core.AbstractServices;
 using BondSharp.OpenApi.Abstract;
 using BondSharp.OpenApi.Alor.Authorization;
 using BondSharp.OpenApi.Alor.Common;
+using BondSharp.OpenApi.Alor.Deals;
 using BondSharp.OpenApi.Alor.Instruments;
 using BondSharp.OpenApi.Alor.Subscriptions;
+using BondSharp.OpenApi.Core.AbstractServices;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,9 +29,16 @@ public static class ServiceRegistration
            .AddSingleton<Settings>(provider => provider.GetRequiredService<IOptions<Settings>>().Value)
            .AddCommon()
            .AddSubscriptions()
-           .AddScoped<IInstrumentsProvider, InstrumentsProvider>();
+           .AddProviers();
 
         return builder;
+    }
+
+    private static IServiceCollection AddProviers(this IServiceCollection services)
+    {
+        return
+            services.AddTransient<IInstrumentsProvider, InstrumentsProvider>()
+            .AddTransient<IDealsProvider, DealsProvider>();
     }
 
     private static IServiceCollection AddSubscriptions(this IServiceCollection services)

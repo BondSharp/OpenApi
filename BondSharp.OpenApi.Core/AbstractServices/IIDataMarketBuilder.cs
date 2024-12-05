@@ -7,5 +7,6 @@ public interface IIDataMarketBuilder
 {
     IIDataMarketBuilder SubscribeOrderBook(IInstrument instrument);
     IIDataMarketBuilder SubscribeDeal(IInstrument instrument);
+    IIDataMarketBuilder SubscribeInstrumentChanged(IInstrument instrument);
     IDataMarket Build();
 }

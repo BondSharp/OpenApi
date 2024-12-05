@@ -30,6 +30,13 @@ internal class SubscriptionsBuilder(IServiceScopeFactory scopeFactory) : IIDataM
         return this;
     }
 
+    public IIDataMarketBuilder SubscribeInstrumentChanged(IInstrument instrument)
+    {
+        requests.Add(new InstrumentChangedRequest(instrument));
+
+        return this;
+    }
+
     public IIDataMarketBuilder SubscribeOrderBook(IInstrument instrument)
     {
         requests.Add(new OrderBookRequest(instrument, 0));

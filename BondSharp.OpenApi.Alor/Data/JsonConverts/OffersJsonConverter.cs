@@ -2,7 +2,7 @@
 using System.Text.Json.Serialization;
 using BonadSharp.OpenApi.Core.Data;
 
-namespace BondSharp.OpenApi.Alor.Data;
+namespace BondSharp.OpenApi.Alor.Data.JsonConvert;
 internal class OffersJsonConverter : JsonConverter<Offer[]>
 {
     public override Offer[] Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -10,7 +10,7 @@ internal class OffersJsonConverter : JsonConverter<Offer[]>
         var result = new List<Offer>(20);
         while (reader.Read())
         {
-            if(reader.TokenType == JsonTokenType.EndArray)
+            if (reader.TokenType == JsonTokenType.EndArray)
             {
                 break;
             }
@@ -21,7 +21,7 @@ internal class OffersJsonConverter : JsonConverter<Offer[]>
             result.Add(offer);
         }
 
-        return result.ToArray(); 
+        return result.ToArray();
     }
 
     public override void Write(Utf8JsonWriter writer, Offer[] value, JsonSerializerOptions options)

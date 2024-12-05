@@ -1,5 +1,6 @@
 ﻿
 
+using System.Text.Json.Serialization;
 using BonadSharp.OpenApi.Core.Instruments;
 
 namespace BondSharp.OpenApi.Alor.Instruments;

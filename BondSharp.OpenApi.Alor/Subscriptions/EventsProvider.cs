@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using BonadSharp.OpenApi.Core.Events;
 using BondSharp.OpenApi.Alor.Data;
 using BondSharp.OpenApi.Alor.Subscriptions.Requests;
+using BondSharp.OpenApi.Core.Data;
 using BondSharp.OpenApi.Core.Events;
 using Websocket.Client;
 
@@ -58,6 +59,12 @@ internal class EventsProvider(RequestsSubscriber requestsSubscriber, IWebsocketC
         {
             var deal = jsonElement.Deserialize<Deal>();
             return new DealEvent() { Data = deal!, Instrument = request.Instrument };
+        }
+
+        if(request is InstrumentChangedRequest)
+        {
+            var instrumentChanged = jsonElement.Deserialize<InstrumentChanged>();
+            return new InstrumentChangedEvent() { Data = instrumentChanged!, Instrument = request.Instrument };
         }
 
         throw new ArgumentException(nameof(request));

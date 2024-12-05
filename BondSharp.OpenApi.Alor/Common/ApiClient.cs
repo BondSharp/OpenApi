@@ -27,10 +27,20 @@ internal class ApiClient
         using var client = CreateClient();
 
         var uri = GetUri(path, query);
-        Console.WriteLine(uri);
         var result = await client.GetFromJsonAsync<T>(uri);
-
+       
         return result!;
+    }
+
+    public async IAsyncEnumerable<T> GetValues<T>(string path, QueryBuilder query)
+    {
+        using var client = CreateClient();
+
+        var uri = GetUri(path, query);
+        await foreach (var item in client.GetFromJsonAsAsyncEnumerable<T>(uri))
+        {
+           yield return item!;
+        }
     }
 
     private Uri GetUri(string path, QueryBuilder queryBuilder)

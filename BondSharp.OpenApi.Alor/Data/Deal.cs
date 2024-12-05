@@ -5,6 +5,9 @@ using BonadSharp.OpenApi.Core.Data;
 namespace BondSharp.OpenApi.Alor.Data;
 internal class Deal : IDeal
 {
+    [JsonPropertyName("id")]
+    public long Id { get; init; }
+
     [JsonPropertyName("px")]
     public double Price { get; init; }
 
@@ -20,5 +23,5 @@ internal class Deal : IDeal
 
     [JsonPropertyName("t")]
     [JsonConverter(typeof(TimestampJsonConverter))]
-    public DateTimeOffset Timestamp { get; set; }
+    public DateTimeOffset Timestamp { get; init; }
 }
