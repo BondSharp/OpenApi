@@ -37,12 +37,24 @@ using IHost host = builder.Build();
 await host.RunAsync();
 ```
 
-## Получение инструмента 
+## Получение инструментов
 
 ```C#
 var instrumentProvider = host.Services.GetRequiredService<IInstrumentsProvider>();
-var instrument = await instrumentProvider.All(TimeSpan.FromDays(1)).OfType<IShare>().FirstAsync(x => x.Symbol == "SBER");
+var sber =  await instrumentProvider.Get<IShare>("sber");
+var futures = instrumentProvider.GetFutures();
+var shares = instrumentProvider.GetShares();
+var americanOptions = instrumentProvider.GetAmericanOptions();
+var europeanOptions = instrumentProvider.GetEuropeanOptions();
 ```
+
+## Получение сделок
+```C#
+var dealsProvider = host.Services.GetRequiredService<IDealsProvider>();
+var dealsPast = await dealsProvider.GetPast(sber).ToArrayAsync();
+var dealsToday = await dealsProvider.GetToday(sber).ToArrayAsync();
+```
+
 
 ## Маркер дата в реальном времени 
 
@@ -51,6 +63,7 @@ using var dataMarket = host.Services
     .GetRequiredService<IIDataMarketBuilder>()
     .SubscribeDeal(instrument)
     .SubscribeOrderBook(instrument)
+	.SubscribeInstrumentChanged(instrument)
     .Build();
 
 dataMarket.Events.Subscribe(@event => Console.WriteLine(@event));
