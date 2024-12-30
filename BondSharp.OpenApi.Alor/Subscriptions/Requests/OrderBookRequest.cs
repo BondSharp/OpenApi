@@ -9,7 +9,9 @@ internal class OrderBookRequest : BaseRequest
 
     public OrderBookRequest(IInstrument instrument, int deal) : base(instrument)
     {
+        Depth = deal;
     }
 
+    [JsonPropertyName("opcode")]
     public override string OperationCode => "OrderBookGetAndSubscribe";
 }

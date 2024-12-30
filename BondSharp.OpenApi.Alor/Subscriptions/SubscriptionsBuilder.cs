@@ -25,7 +25,7 @@ internal class SubscriptionsBuilder(IServiceScopeFactory scopeFactory) : IIDataM
 
     public IIDataMarketBuilder SubscribeDeal(IInstrument instrument)
     {
-        requests.Add(new DealsRequest(instrument, 20));
+        requests.Add(new DealsRequest(instrument, 0));
 
         return this;
     }
@@ -39,7 +39,7 @@ internal class SubscriptionsBuilder(IServiceScopeFactory scopeFactory) : IIDataM
 
     public IIDataMarketBuilder SubscribeOrderBook(IInstrument instrument)
     {
-        requests.Add(new OrderBookRequest(instrument, 0));
+        requests.Add(new OrderBookRequest(instrument, 50));
 
         return this;
     }

@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using BonadSharp.OpenApi.Core.Instruments;
 
 namespace BondSharp.OpenApi.Alor.Subscriptions.Requests;
@@ -26,7 +27,10 @@ internal abstract class BaseRequest
     public string Exchange => "MOEX";
 
     [JsonPropertyName("frequency")]
-    public int Frequency { get; } = 0;
+    public int Frequency { get; } = 10;
+
+    [JsonPropertyName("instrumentGroup")]
+    public string instrumentGroup => "TQBR";
 
     public BaseRequest(IInstrument instrument)
     {

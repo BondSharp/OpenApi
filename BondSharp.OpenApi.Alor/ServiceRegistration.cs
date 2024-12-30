@@ -20,7 +20,7 @@ public static class ServiceRegistration
 {
     private const string configKey = "AlorClient";
 
-    public static IHostApplicationBuilder AddAlor(this IHostApplicationBuilder builder, IConfiguration configuration)
+    public static IHostApplicationBuilder AddAlor(this IHostApplicationBuilder builder)
     {
         var services = builder.Services;
         var config = builder.Configuration.GetSection(configKey);
@@ -56,6 +56,7 @@ public static class ServiceRegistration
         return services
                .AddSingleton<TokenAuthorization>()
               .AddSingleton<ApiClient>()
-              .AddScoped<IInstrumentsProvider, InstrumentsProvider>();
+              .AddScoped<IInstrumentsProvider, InstrumentsProvider>()
+              .AddHostedService<UpdatingToken>();
     }
 }
