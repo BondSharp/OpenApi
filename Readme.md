@@ -55,12 +55,9 @@ var dealsToday = await dealsProvider.GetToday(sber).ToArrayAsync();
 ## Маркер дата в реальном времени 
 
 ``` C#
-using var dataMarket = host.Services
-    .GetRequiredService<IIDataMarketBuilder>()
-    .SubscribeDeal(instrument)
-    .SubscribeOrderBook(instrument)
-	.SubscribeInstrumentChanged(instrument)
-    .Build();
-
-dataMarket.Events.Subscribe(@event => Console.WriteLine(@event));
+var marketData = host.Services.GetRequiredService<IDataMarket>();
+marketData.Events.Subscribe(@event => Console.WriteLine(@event), error => Console.WriteLine(error));
+marketData.SubscribeOrderBook(sber);
+marketData.SubscribeDeal(sber);
+marketData.SubscribeInstrumentChanged(sber);
 ```
