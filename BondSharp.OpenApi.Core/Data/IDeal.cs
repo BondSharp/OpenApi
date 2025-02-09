@@ -6,4 +6,5 @@ public interface IDeal : ITime
     int Quantity { get; }
     Side Side { get; }
     int OpenInterest { get; }
+    bool Existing { get; }
 }

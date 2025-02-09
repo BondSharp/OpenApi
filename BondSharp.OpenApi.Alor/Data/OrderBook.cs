@@ -17,4 +17,9 @@ internal class OrderBook : IOrderBook
     [JsonConverter(typeof(TimestampJsonConverter))]
     public DateTimeOffset Timestamp { get; set; }
 
+    [JsonPropertyName("h")]
+    public bool Existing { get; set; }
+
+    [JsonIgnore]
+    public DateTimeOffset ReceivedAt { get; set; }
 }

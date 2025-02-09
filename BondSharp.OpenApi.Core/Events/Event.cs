@@ -6,9 +6,8 @@ public abstract class Event<TData> : IEvent, ITime where TData : ITime
 {
     public required TData Data { get; init; }
     public required IInstrument Instrument { get; init; }
-
     public DateTimeOffset Timestamp => Data.Timestamp;
-
+    public DateTimeOffset ReceivedAt => Data.ReceivedAt;
     public override string ToString()
     {
         return $"{Timestamp} {Instrument.Symbol}";

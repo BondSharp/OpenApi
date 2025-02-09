@@ -2,10 +2,11 @@
 using BondSharp.OpenApi.Core.Data;
 
 namespace BondSharp.OpenApi.Core.Events;
-public class NotificationEvent : Event<INotification>
+public class SubscribedEvent : Event<INotification>
 {
+    public bool Success => Data.Success;
     public override string ToString()
     {
-        return $"{base.ToString()} Notification {Data.Message}";
+        return $"{base.ToString()} Subscribed";
     }
 }

@@ -3,7 +3,6 @@
 public interface IOrderBook : ITime
 {
     Offer[] Bids { get; }
-
     Offer[] Asks { get; }
-    
+    bool Existing { get; }
 }

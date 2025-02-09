@@ -1,16 +1,19 @@
 ﻿using System.Reactive.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using BonadSharp.OpenApi.Core.Data;
 using BonadSharp.OpenApi.Core.Events;
 using BondSharp.OpenApi.Alor.Data;
 using BondSharp.OpenApi.Alor.Subscriptions.Requests;
+using BondSharp.OpenApi.Core.AbstractServices;
 using BondSharp.OpenApi.Core.Data;
 using BondSharp.OpenApi.Core.Events;
 using Websocket.Client;
 
 namespace BondSharp.OpenApi.Alor.Subscriptions;
-internal class EventsProvider(RequestsSubscriber requestsSubscriber, IWebsocketClient client) : IObservable<IEvent>
+internal class EventsProvider(Subscriber requestsSubscriber, ITimeProvider timeProvider, IWebsocketClient client) : IObservable<IEvent>
 {
+ 
     public IDisposable Subscribe(IObserver<IEvent> observer)
     {
         return client.MessageReceived
@@ -51,19 +54,23 @@ internal class EventsProvider(RequestsSubscriber requestsSubscriber, IWebsocketC
     {
         if (request is OrderBookRequest)
         {
-            var orderBook = jsonElement.Deserialize<OrderBook>();
-            return new OrderBookEvent { Data = orderBook!, Instrument = request.Instrument };
+            var z = jsonElement.GetRawText();
+            var orderBook = jsonElement.Deserialize<OrderBook>()!;
+            orderBook.ReceivedAt = timeProvider.UtcNow();
+            return new OrderBookEvent { Data = orderBook, Instrument = request.Instrument };
         }
 
         if (request is DealsRequest)
         {
-            var deal = jsonElement.Deserialize<Deal>();
+            var deal = jsonElement.Deserialize<Deal>()!;
+            deal.ReceivedAt = timeProvider.UtcNow();
             return new DealEvent() { Data = deal!, Instrument = request.Instrument };
         }
 
-        if(request is InstrumentChangedRequest)
+        if (request is InstrumentChangedRequest)
         {
-            var instrumentChanged = jsonElement.Deserialize<InstrumentChanged>();
+            var instrumentChanged = jsonElement.Deserialize<InstrumentChanged>()!;
+            instrumentChanged.ReceivedAt = timeProvider.UtcNow();
             return new InstrumentChangedEvent() { Data = instrumentChanged!, Instrument = request.Instrument };
         }
 
@@ -78,7 +85,12 @@ internal class EventsProvider(RequestsSubscriber requestsSubscriber, IWebsocketC
         var message = jsonDocument.RootElement.GetProperty("message").GetString() ?? throw new NullReferenceException();
         var request = requestsSubscriber.GetRequest(guid);
         var notification = new Notification(code, message);
+        notification.ReceivedAt = timeProvider.UtcNow();
+        return new SubscribedEvent() { Data = notification, Instrument = request.Instrument };
+    }
 
-        return new NotificationEvent() { Data = notification, Instrument = request.Instrument };
+    private T Deserialize<T>(JsonElement jsonElement) where T : ITime
+    {
+        return jsonElement.Deserialize<T>()!;
     }
 }

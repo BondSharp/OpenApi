@@ -27,7 +27,7 @@ internal abstract class BaseRequest
     public string Exchange => "MOEX";
 
     [JsonPropertyName("frequency")]
-    public int Frequency { get; } = 10;
+    public int Frequency { get; } = 1;
 
     [JsonPropertyName("instrumentGroup")]
     public string instrumentGroup => "TQBR";

@@ -23,18 +23,15 @@
 
 ## Пример подключение библиотеки 
 ```C#
-using BonadSharp.OpenApi.Core.AbstractServices;
-using BondSharp.OpenApi.Abstract;
-using BondSharp.OpenApi.Alor;
-using BondSharp.OpenApi.Domain.Instruments;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 var builder = Host.CreateApplicationBuilder(args);
 builder.Configuration.AddJsonFile("hostsettings.json");
-builder.AddAlor(builder.Configuration);
+builder
+    .AddDefaultTimeProvider()
+    .AddAlor();
+
 using IHost host = builder.Build();
-await host.RunAsync();
+var cancellationTokenSource = new CancellationTokenSource();
+var task = host.RunAsync(cancellationTokenSource.Token);
 ```
 
 ## Получение инструментов
@@ -54,7 +51,6 @@ var dealsProvider = host.Services.GetRequiredService<IDealsProvider>();
 var dealsPast = await dealsProvider.GetPast(sber).ToArrayAsync();
 var dealsToday = await dealsProvider.GetToday(sber).ToArrayAsync();
 ```
-
 
 ## Маркер дата в реальном времени 
 

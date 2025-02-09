@@ -3,9 +3,11 @@
 namespace BondSharp.OpenApi.Alor.Subscriptions;
 internal class Notification : INotification
 {
-    public DateTimeOffset Timestamp { get; } = DateTime.Now;
+    public DateTimeOffset Timestamp { get; } = default(DateTimeOffset);
     public bool Success { get; }
     public string Message { get; }
+
+    public DateTimeOffset ReceivedAt { get; set; }
 
     public Notification(int code, string message)
     {

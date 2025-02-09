@@ -2,4 +2,5 @@
 public interface ITime
 {
     DateTimeOffset Timestamp { get; }
+    DateTimeOffset ReceivedAt { get; }
 }

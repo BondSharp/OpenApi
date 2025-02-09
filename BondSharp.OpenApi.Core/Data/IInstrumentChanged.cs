@@ -7,5 +7,4 @@ public interface IInstrumentChanged : ITime
     TradingStatus? Status { get; }
     double? PriceMin { get; }
     double? PriceMax { get; }
-
 }

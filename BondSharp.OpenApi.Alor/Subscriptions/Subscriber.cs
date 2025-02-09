@@ -4,7 +4,7 @@ using BondSharp.OpenApi.Alor.Subscriptions.Requests;
 using Websocket.Client;
 
 namespace BondSharp.OpenApi.Alor.Subscriptions;
-internal class RequestsSubscriber(TokenAuthorization tokenAuthorization, IWebsocketClient client)
+internal class Subscriber(TokenAuthorization tokenAuthorization, IWebsocketClient client)
 {
     private readonly Dictionary<Guid, BaseRequest> requests = new Dictionary<Guid, BaseRequest>();
 
@@ -13,7 +13,7 @@ internal class RequestsSubscriber(TokenAuthorization tokenAuthorization, IWebsoc
         return requests[guid];
     }
 
-    public void AddRequest(BaseRequest request)
+    public void Subscribe(BaseRequest request)
     {
         if (requests.ContainsKey(request.Guid))
         {
@@ -21,17 +21,19 @@ internal class RequestsSubscriber(TokenAuthorization tokenAuthorization, IWebsoc
         }
         requests.Add(request.Guid, request);
 
+        Send(request);
+
     }
 
-    public void Subscribe()
+    public void ReSubscribe()
     {
         foreach (var request in requests.Values)
         {
-            Push(request);
+            Send(request);
         }
     }
 
-    private void Push(BaseRequest request)
+    private void Send(BaseRequest request)
     {
         var token = tokenAuthorization.Token();
         request.Token = token.AccessToken;

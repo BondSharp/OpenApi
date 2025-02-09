@@ -24,4 +24,10 @@ internal class Deal : IDeal
     [JsonPropertyName("t")]
     [JsonConverter(typeof(TimestampJsonConverter))]
     public DateTimeOffset Timestamp { get; init; }
+
+    [JsonPropertyName("h")]
+    public bool Existing { get; init; }
+    
+    [JsonIgnore]
+    public DateTimeOffset ReceivedAt { get; set; }
 }

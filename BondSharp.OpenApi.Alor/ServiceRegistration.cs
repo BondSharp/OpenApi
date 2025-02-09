@@ -1,7 +1,6 @@
 ﻿
 using AlorClient;
 using BonadSharp.OpenApi.Core.AbstractServices;
-using BondSharp.OpenApi.Abstract;
 using BondSharp.OpenApi.Alor.Authorization;
 using BondSharp.OpenApi.Alor.Common;
 using BondSharp.OpenApi.Alor.Deals;
@@ -44,10 +43,10 @@ public static class ServiceRegistration
     private static IServiceCollection AddSubscriptions(this IServiceCollection services)
     {
         return services
-            .AddTransient<IIDataMarketBuilder, SubscriptionsBuilder>()
+            .AddScoped<IDataMarket, DataMarket>()
             .AddTransient<WebSocketClientFactory>()
             .AddScoped<IWebsocketClient>(x => x.GetRequiredService<WebSocketClientFactory>().Factory())
-            .AddScoped<RequestsSubscriber>()
+            .AddScoped<Subscriber>()
             .AddScoped<EventsProvider>();
     }
 

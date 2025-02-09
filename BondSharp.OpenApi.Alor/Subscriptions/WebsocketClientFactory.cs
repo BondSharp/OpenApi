@@ -24,17 +24,18 @@ internal class WebSocketClientFactory
             var result = new System.Net.WebSockets.ClientWebSocket();
             result!.Options.DangerousDeflateOptions = new WebSocketDeflateOptions
             {
-                ClientMaxWindowBits = 15,           // Max window size for client compression (15 bits is the maximum allowed)
-                ServerMaxWindowBits = 15,           // Max window size for server compression
-                ClientContextTakeover = true,       // Enable client-side context takeover (preserve compression context between messages)
-                ServerContextTakeover = true        // Enable server-side context takeover
-            }; 
-      
+                ClientMaxWindowBits = 15,
+                ServerMaxWindowBits = 15,
+                ClientContextTakeover = false,
+                ServerContextTakeover = false,               
+            };
+
             return result;
         });
         
         webSocketClient.ReconnectTimeout = settings.ReconnectTimeout;
-        webSocketClient.ErrorReconnectTimeout = settings.ErrorReconnectTimeout;      
+        webSocketClient.ErrorReconnectTimeout = settings.ErrorReconnectTimeout;
+        webSocketClient.Start();
         return webSocketClient;
     }
 }
