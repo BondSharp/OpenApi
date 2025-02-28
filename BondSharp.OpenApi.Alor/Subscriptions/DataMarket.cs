@@ -27,7 +27,7 @@ internal class DataMarket(EventsProvider eventsProvider, Subscriber requestsSubs
 
     public void SubscribeOrderBook(IInstrument instrument)
     {
-        var request = new InstrumentChangedRequest(instrument);
+        var request = new OrderBookRequest(instrument,20);
 
         requestsSubscriber.Subscribe(request);
     }

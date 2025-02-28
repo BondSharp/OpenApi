@@ -11,9 +11,9 @@ using BondSharp.OpenApi.Core.Events;
 using Websocket.Client;
 
 namespace BondSharp.OpenApi.Alor.Subscriptions;
-internal class EventsProvider(Subscriber requestsSubscriber, ITimeProvider timeProvider, IWebsocketClient client) : IObservable<IEvent>
+internal class EventsProvider(Subscriber requestsSubscriber, IWebsocketClient client) : IObservable<IEvent>
 {
- 
+
     public IDisposable Subscribe(IObserver<IEvent> observer)
     {
         return client.MessageReceived
@@ -56,21 +56,21 @@ internal class EventsProvider(Subscriber requestsSubscriber, ITimeProvider timeP
         {
             var z = jsonElement.GetRawText();
             var orderBook = jsonElement.Deserialize<OrderBook>()!;
-            orderBook.ReceivedAt = timeProvider.UtcNow();
+            orderBook.ReceivedAt = DateTimeOffset.UtcNow;
             return new OrderBookEvent { Data = orderBook, Instrument = request.Instrument };
         }
 
         if (request is DealsRequest)
         {
             var deal = jsonElement.Deserialize<Deal>()!;
-            deal.ReceivedAt = timeProvider.UtcNow();
+            deal.ReceivedAt = DateTimeOffset.UtcNow;
             return new DealEvent() { Data = deal!, Instrument = request.Instrument };
         }
 
         if (request is InstrumentChangedRequest)
         {
             var instrumentChanged = jsonElement.Deserialize<InstrumentChanged>()!;
-            instrumentChanged.ReceivedAt = timeProvider.UtcNow();
+            instrumentChanged.ReceivedAt = DateTimeOffset.UtcNow;
             return new InstrumentChangedEvent() { Data = instrumentChanged!, Instrument = request.Instrument };
         }
 
@@ -85,7 +85,7 @@ internal class EventsProvider(Subscriber requestsSubscriber, ITimeProvider timeP
         var message = jsonDocument.RootElement.GetProperty("message").GetString() ?? throw new NullReferenceException();
         var request = requestsSubscriber.GetRequest(guid);
         var notification = new Notification(code, message);
-        notification.ReceivedAt = timeProvider.UtcNow();
+        notification.ReceivedAt = DateTimeOffset.UtcNow;
         return new SubscribedEvent() { Data = notification, Instrument = request.Instrument };
     }
 
