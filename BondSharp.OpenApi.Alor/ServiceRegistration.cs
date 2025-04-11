@@ -47,7 +47,8 @@ public static class ServiceRegistration
             .AddTransient<WebSocketClientFactory>()
             .AddScoped<IWebsocketClient>(x => x.GetRequiredService<WebSocketClientFactory>().Factory())
             .AddScoped<Subscriber>()
-            .AddScoped<EventsProvider>();
+            .AddScoped<EventsProvider>()
+            .AddScoped<ReconnectionProvider>();
     }
 
     private static IServiceCollection AddCommon(this IServiceCollection services)

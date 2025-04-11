@@ -4,13 +4,22 @@ using BonadSharp.OpenApi.Core.Instruments;
 using BondSharp.OpenApi.Alor.Authorization;
 using BondSharp.OpenApi.Alor.Subscriptions.Requests;
 using BondSharp.OpenApi.Core.AbstractServices;
+using BondSharp.OpenApi.Core.Events;
 using Microsoft.Extensions.DependencyInjection;
 using Websocket.Client;
 
 namespace BondSharp.OpenApi.Alor.Subscriptions;
-internal class DataMarket(EventsProvider eventsProvider, Subscriber requestsSubscriber) : IDataMarket
+internal class DataMarket(EventsProvider eventsProvider, ReconnectionProvider reconnectionProvider, Subscriber requestsSubscriber) : IDataMarket
 {
+    
     public IObservable<IEvent> Events => eventsProvider;
+
+    public IObservable<Reconnection> Reconnections => reconnectionProvider;
+
+    public void Resubscribe()
+    {
+        requestsSubscriber.ReSubscribe();
+    }
 
     public void SubscribeDeal(IInstrument instrument)
     {
