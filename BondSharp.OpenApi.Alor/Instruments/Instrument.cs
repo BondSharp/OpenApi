@@ -16,4 +16,9 @@ internal class Instrument : IInstrument
 
     [JsonPropertyName("lot")]
     public required double Lot { get; set; }
+
+    [JsonPropertyName("Cncl")]
+    public DateTimeOffset Cancellation { get; set; }
+
+    public DateTimeOffset Updated { get; set; } = DateTimeOffset.UtcNow;
 }

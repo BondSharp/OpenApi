@@ -29,9 +29,6 @@ internal abstract class BaseRequest
     [JsonPropertyName("frequency")]
     public int Frequency { get; } = 1;
 
-    [JsonPropertyName("instrumentGroup")]
-    public string instrumentGroup => "TQBR";
-
     public BaseRequest(IInstrument instrument)
     {
         Instrument = instrument;

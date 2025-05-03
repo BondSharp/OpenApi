@@ -1,8 +1,11 @@
 ﻿namespace BonadSharp.OpenApi.Core.Instruments;
 public interface IInstrument 
 {
-    public string Symbol { get; }
-    public double PriceStep { get; }
-    public double Lot { get; }
-    public string CfiCode { get; }
+    string Symbol { get; }
+    double PriceStep { get; }
+    double Lot { get; }
+    string CfiCode { get; }
+    DateTimeOffset Cancellation { get;}
+
+    DateTimeOffset Updated { get; }
 }

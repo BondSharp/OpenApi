@@ -84,7 +84,7 @@ internal class InstrumentsProvider(ApiClient alorApi) : IInstrumentsProvider
         return shares;
     }
 
-    private IAsyncEnumerable<Instrument> GetSecurities(string? cficode = null, string? sector = null, string? query = null)
+    private async IAsyncEnumerable<Instrument> GetSecurities(string? cficode = null, string? sector = null, string? query = null)
     {
         var @params = new Dictionary<string, string>()
         {
@@ -110,9 +110,15 @@ internal class InstrumentsProvider(ApiClient alorApi) : IInstrumentsProvider
             queryBuilder.Add("query", query);
         }
 
-        var result = alorApi.GetValues<JsonDocument>("md/v2/Securities", queryBuilder);
+        var result = alorApi.GetValues<JsonDocument>("md/v2/Securities", queryBuilder)
+            .Select(Parser);
 
-        return result.Select(Parser);
+        await foreach (var item in result)
+        {
+            item.Cancellation = item.Cancellation.UtcDateTime;
+            yield return item;
+        }
+    
     }
 
     private Instrument Parser(JsonDocument jsonDocument)
