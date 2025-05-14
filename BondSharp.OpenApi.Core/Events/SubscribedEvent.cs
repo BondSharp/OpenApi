@@ -7,6 +7,6 @@ public class SubscribedEvent : Event<INotification>
     public bool Success => Data.Success;
     public override string ToString()
     {
-        return $"{base.ToString()} Subscribed";
+        return $"{base.ToString()} {Success} Subscribed";
     }
 }

@@ -10,6 +10,10 @@ public abstract class Event<TData> : IEvent, ITime where TData : ITime
     public DateTimeOffset ReceivedAt => Data.ReceivedAt;
     public override string ToString()
     {
+        if (Timestamp == default(DateTimeOffset))
+        {
+            return $"{Instrument.Symbol}";
+        }
         return $"{Timestamp} {Instrument.Symbol}";
     }
 }
