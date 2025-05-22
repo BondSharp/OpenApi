@@ -2,7 +2,7 @@
 using BonadSharp.OpenApi.Core.Instruments;
 
 namespace BondSharp.OpenApi.Alor.Subscriptions.Requests;
-internal class OrderBookRequest : BaseRequest
+internal class OrderBookRequest : MarketDataRequest
 {
     [JsonPropertyName("depth")]
     public int Depth { get; }

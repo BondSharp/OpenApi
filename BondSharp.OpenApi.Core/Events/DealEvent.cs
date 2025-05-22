@@ -1,7 +1,7 @@
 ﻿using BonadSharp.OpenApi.Core.Data;
 
 namespace BonadSharp.OpenApi.Core.Events;
-public class DealEvent : Event<IDeal>
+public class DealEvent : MarketDataEvent<IDeal>
 {
     public override string ToString()
     {

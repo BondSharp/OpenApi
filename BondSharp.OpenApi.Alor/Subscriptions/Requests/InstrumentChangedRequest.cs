@@ -1,7 +1,7 @@
 ﻿using BonadSharp.OpenApi.Core.Instruments;
 
 namespace BondSharp.OpenApi.Alor.Subscriptions.Requests;
-internal class InstrumentChangedRequest : BaseRequest
+internal class InstrumentChangedRequest : MarketDataRequest
 {
     public InstrumentChangedRequest(IInstrument instrument) : base(instrument)
     {

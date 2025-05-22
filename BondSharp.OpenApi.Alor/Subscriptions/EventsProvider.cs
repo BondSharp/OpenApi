@@ -13,7 +13,6 @@ using Websocket.Client;
 namespace BondSharp.OpenApi.Alor.Subscriptions;
 internal class EventsProvider(Subscriber requestsSubscriber, IWebsocketClient client) : IObservable<IEvent>
 {
-
     public IDisposable Subscribe(IObserver<IEvent> observer)
     {
         return client.MessageReceived
@@ -43,34 +42,31 @@ internal class EventsProvider(Subscriber requestsSubscriber, IWebsocketClient cl
 
         var data = jsonDocument.RootElement.GetProperty("data");
         var guid = jsonDocument.RootElement.GetProperty("guid").GetGuid();
-        var subscription = requestsSubscriber.GetRequest(guid);
+        var subscription = requestsSubscriber.FindRequest(guid)!;
         var message = ParseMessage(subscription, data);
 
         return message;
 
     }
 
-    private IEvent ParseMessage(BaseRequest request, JsonElement jsonElement)
+    private IEvent ParseMessage(MarketDataRequest request, JsonElement jsonElement)
     {
-        if (request is OrderBookRequest)
+        if (request is OrderBookRequest orderBookRequest)
         {
             var z = jsonElement.GetRawText();
             var orderBook = jsonElement.Deserialize<OrderBook>()!;
-            orderBook.ReceivedAt = DateTimeOffset.UtcNow;
-            return new OrderBookEvent { Data = orderBook, Instrument = request.Instrument };
+            return new OrderBookEvent { Data = orderBook, Instrument = request.Instrument, Depth = orderBookRequest.Depth };
         }
 
         if (request is DealsRequest)
         {
             var deal = jsonElement.Deserialize<Deal>()!;
-            deal.ReceivedAt = DateTimeOffset.UtcNow;
             return new DealEvent() { Data = deal!, Instrument = request.Instrument };
         }
 
         if (request is InstrumentChangedRequest)
         {
             var instrumentChanged = jsonElement.Deserialize<InstrumentChanged>()!;
-            instrumentChanged.ReceivedAt = DateTimeOffset.UtcNow;
             return new InstrumentChangedEvent() { Data = instrumentChanged!, Instrument = request.Instrument };
         }
 
@@ -79,17 +75,20 @@ internal class EventsProvider(Subscriber requestsSubscriber, IWebsocketClient cl
 
     private IEvent ParseNotification(ResponseMessage responseMessage)
     {
-        using var jsonDocument = JsonDocument.Parse(responseMessage.Text!);
-        var guid = jsonDocument.RootElement.GetProperty("requestGuid").GetGuid();
-        var code = jsonDocument.RootElement.GetProperty("httpCode").GetInt32();
-        var message = jsonDocument.RootElement.GetProperty("message").GetString() ?? throw new NullReferenceException();
-        var request = requestsSubscriber.GetRequest(guid);
-        var notification = new Notification(code, message);
-        notification.ReceivedAt = DateTimeOffset.UtcNow;
-        return new SubscribedEvent() { Data = notification, Instrument = request.Instrument };
+        var notifaction = JsonSerializer.Deserialize<Notification>(responseMessage.Text!)!;
+        var request = requestsSubscriber.FindRequest(notifaction.RequestGuid);
+        if (request != null)
+        {
+            return new SubscribedEvent() { Success = notifaction.Success, Message = notifaction.ToString(), Instrument = request.Instrument };
+        }
+        if (requestsSubscriber.TryPingParse(notifaction.RequestGuid, out var pingEvent))
+        {
+            return pingEvent;
+        }
+        return new NotificationEvent() { Success = notifaction.Success, Message = notifaction.Message };
     }
 
-    private T Deserialize<T>(JsonElement jsonElement) where T : ITime
+    private T Deserialize<T>(JsonElement jsonElement) where T : IMarketData
     {
         return jsonElement.Deserialize<T>()!;
     }

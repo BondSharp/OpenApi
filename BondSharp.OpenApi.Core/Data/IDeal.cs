@@ -1,5 +1,5 @@
 ﻿namespace BonadSharp.OpenApi.Core.Data;
-public interface IDeal : ITime
+public interface IDeal : IMarketData
 {
     long Id { get; }
     double Price { get; }

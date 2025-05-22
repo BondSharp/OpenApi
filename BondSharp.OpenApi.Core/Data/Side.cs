@@ -1,5 +1,5 @@
 ﻿namespace BonadSharp.OpenApi.Core.Data;
-public enum Side
+public enum Side : byte
 {
     Buy,
     Sell

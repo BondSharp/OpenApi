@@ -1,19 +1,37 @@
 ﻿using System.Text.Json;
 using BondSharp.OpenApi.Alor.Authorization;
 using BondSharp.OpenApi.Alor.Subscriptions.Requests;
+using BondSharp.OpenApi.Core.Events;
 using Websocket.Client;
 
 namespace BondSharp.OpenApi.Alor.Subscriptions;
-internal class Subscriber(TokenAuthorization tokenAuthorization, IWebsocketClient client)
+internal class Subscriber(
+    TokenAuthorization tokenAuthorization,
+    IWebsocketClient client,
+    PingService pingService
+    )
 {
-    private readonly Dictionary<Guid, BaseRequest> requests = new Dictionary<Guid, BaseRequest>();
+    private readonly Dictionary<Guid, MarketDataRequest> requests = new Dictionary<Guid, MarketDataRequest>();
 
-    public BaseRequest GetRequest(Guid guid)
+    public MarketDataRequest? FindRequest(Guid guid)
     {
-        return requests[guid];
+        return requests.GetValueOrDefault(guid,null);
     }
 
-    public void Subscribe(BaseRequest request)
+    public bool TryPingParse(Guid guid, out PingEvent pingEvent)
+    {
+
+        if (pingService.TryParse(guid, out var delay))
+        {
+            pingEvent = new PingEvent() { Delay = delay };
+            return true;
+        };
+        pingEvent = null!;
+        return false;
+
+    }
+
+    public void Subscribe(MarketDataRequest request)
     {
         if (requests.ContainsKey(request.Guid))
         {
@@ -31,6 +49,12 @@ internal class Subscriber(TokenAuthorization tokenAuthorization, IWebsocketClien
         {
             Send(request);
         }
+    }
+
+    public void SendPing()
+    {
+        var ping = new PingRequest() { Guid = pingService.CreateGuidRequest()};
+        Send(ping);
     }
 
     private void Send(BaseRequest request)

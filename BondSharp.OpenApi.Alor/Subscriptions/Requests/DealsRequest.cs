@@ -2,7 +2,7 @@
 using BonadSharp.OpenApi.Core.Instruments;
 
 namespace BondSharp.OpenApi.Alor.Subscriptions.Requests;
-internal class DealsRequest :  BaseRequest
+internal class DealsRequest :  MarketDataRequest
 {
     public DealsRequest(IInstrument instrument, int depth) : base(instrument)
     {

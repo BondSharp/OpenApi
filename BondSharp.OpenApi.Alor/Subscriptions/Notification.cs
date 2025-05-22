@@ -1,17 +1,21 @@
-﻿using BondSharp.OpenApi.Core.Data;
+﻿using System.Text.Json.Serialization;
+using BondSharp.OpenApi.Core.Data;
 
 namespace BondSharp.OpenApi.Alor.Subscriptions;
-internal class Notification : INotification
+internal class Notification
 {
-    public DateTimeOffset Timestamp { get; } = default(DateTimeOffset);
-    public bool Success { get; }
-    public string Message { get; }
+    [JsonPropertyName("requestGuid")]
+    public Guid RequestGuid { get; init; }
+    [JsonPropertyName("httpCode")]
+    public int Code { get; init; }
+    [JsonPropertyName("message")]
+    public required string Message { get; init; }
 
-    public DateTimeOffset ReceivedAt { get; set; }
+    [JsonIgnore]
+    public bool Success => 200 == Code;
 
-    public Notification(int code, string message)
+    public override string ToString()
     {
-        Success = code == 200;
-        Message = $"{message} with code = {code}";
+        return $"{Message} with code = {Code}"; ;
     }
 }

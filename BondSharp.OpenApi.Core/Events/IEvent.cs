@@ -1,8 +1,4 @@
-﻿using BonadSharp.OpenApi.Core.Data;
-using BonadSharp.OpenApi.Core.Instruments;
-
-namespace BonadSharp.OpenApi.Core.Events;
-public interface IEvent : ITime
+﻿namespace BondSharp.OpenApi.Core.Events;
+public interface IEvent
 {
-    IInstrument Instrument { get; }    
 }

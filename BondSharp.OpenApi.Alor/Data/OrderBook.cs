@@ -15,11 +15,11 @@ internal class OrderBook : IOrderBook
 
     [JsonPropertyName("t")]
     [JsonConverter(typeof(TimestampJsonConverter))]
-    public DateTimeOffset Timestamp { get; set; }
+    public required DateTime Timestamp { get; init; }
 
     [JsonPropertyName("h")]
-    public bool Existing { get; set; }
+    public required bool Existing { get; init; }
 
     [JsonIgnore]
-    public DateTimeOffset ReceivedAt { get; set; }
+    public required DateTime ReceivedAt { get; init; } = DateTime.Now;
 }

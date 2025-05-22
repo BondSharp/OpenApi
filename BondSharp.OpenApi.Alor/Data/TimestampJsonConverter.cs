@@ -3,17 +3,18 @@ using System.Text.Json.Serialization;
 
 namespace BondSharp.OpenApi.Alor.Data;
 
-internal class TimestampJsonConverter : JsonConverter<DateTimeOffset>
+internal class TimestampJsonConverter : JsonConverter<DateTime>
 {
-    public override DateTimeOffset Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         var value = reader.GetInt64();
-        return DateTimeOffset.FromUnixTimeMilliseconds(value);
+        return DateTimeOffset.FromUnixTimeMilliseconds(value).LocalDateTime;
     }
 
-    public override void Write(Utf8JsonWriter writer, DateTimeOffset value, JsonSerializerOptions options)
+    public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
     {
-        var unixTimeMilliseconds = value.ToUnixTimeMilliseconds();
+        var datetimeOffset = new DateTimeOffset(value);
+        var unixTimeMilliseconds = datetimeOffset.ToUnixTimeMilliseconds();
         writer.WriteNumberValue(unixTimeMilliseconds);
     }
 }

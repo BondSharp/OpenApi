@@ -3,10 +3,10 @@ using BondSharp.OpenApi.Core.Events;
 using Websocket.Client;
 
 namespace BondSharp.OpenApi.Alor.Subscriptions;
-internal class ReconnectionProvider(IWebsocketClient client) : IObservable<Reconnection>
+internal class ReconnectionProvider(IWebsocketClient client) : IObservable<ReconnectionEvent>
 {
 
-    public IDisposable Subscribe(IObserver<Reconnection> observer)
+    public IDisposable Subscribe(IObserver<ReconnectionEvent> observer)
     {
  
         return client.ReconnectionHappened
@@ -15,9 +15,9 @@ internal class ReconnectionProvider(IWebsocketClient client) : IObservable<Recon
             .Subscribe(observer);
     }
 
-    private Reconnection Map(ReconnectionInfo reconnectionInfo)
+    private ReconnectionEvent Map(ReconnectionInfo reconnectionInfo)
     {
 
-        return new Reconnection() { Message = reconnectionInfo.Type.ToString() };
+        return new ReconnectionEvent() { Message = reconnectionInfo.Type.ToString() };
     }
 }

@@ -14,8 +14,6 @@ internal class InstrumentChanged : IInstrumentChanged
     [JsonPropertyName("pxmx")]
     public double? PriceMax { get; init; }
 
-    public DateTimeOffset Timestamp { get; init; } = default(DateTimeOffset);
-    
     [JsonIgnore]
-    public DateTimeOffset ReceivedAt { get; set; }
+    public DateTime ReceivedAt { get; set; } = DateTime.Now;
 }

@@ -1,6 +1,6 @@
 ﻿namespace BonadSharp.OpenApi.Core.Data;
 
-public interface IOrderBook : ITime
+public interface IOrderBook : IMarketData
 {
     Offer[] Bids { get; }
     Offer[] Asks { get; }

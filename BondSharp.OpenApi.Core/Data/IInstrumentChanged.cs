@@ -2,9 +2,11 @@
 
 namespace BondSharp.OpenApi.Core.Data;
 
-public interface IInstrumentChanged : ITime
+public interface IInstrumentChanged
 {
     TradingStatus? Status { get; }
     double? PriceMin { get; }
     double? PriceMax { get; }
+    DateTime ReceivedAt { get;}
+
 }

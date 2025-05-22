@@ -43,12 +43,13 @@ public static class ServiceRegistration
     private static IServiceCollection AddSubscriptions(this IServiceCollection services)
     {
         return services
-            .AddScoped<IDataMarket, DataMarket>()
+            .AddScoped<IClientEventProvider, DataMarket>()
             .AddTransient<WebSocketClientFactory>()
             .AddScoped<IWebsocketClient>(x => x.GetRequiredService<WebSocketClientFactory>().Factory())
             .AddScoped<Subscriber>()
             .AddScoped<EventsProvider>()
-            .AddScoped<ReconnectionProvider>();
+            .AddScoped<ReconnectionProvider>()
+            .AddScoped<PingService>();
     }
 
     private static IServiceCollection AddCommon(this IServiceCollection services)
