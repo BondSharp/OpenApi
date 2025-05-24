@@ -7,7 +7,7 @@ public interface IClientEventProvider
 {
     IObservable<IEvent> Events { get; }
     IObservable<ReconnectionEvent> Reconnections { get; }
-    void SubscribeOrderBook(IInstrument instrument);
+    void SubscribeOrderBook(IInstrument instrument, int depth);
     void SubscribeDeal(IInstrument instrument);
     void SubscribeInstrumentChanged(IInstrument instrument);
     void Ping();

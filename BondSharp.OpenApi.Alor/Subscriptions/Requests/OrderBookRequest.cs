@@ -7,9 +7,9 @@ internal class OrderBookRequest : MarketDataRequest
     [JsonPropertyName("depth")]
     public int Depth { get; }
 
-    public OrderBookRequest(IInstrument instrument, int deal) : base(instrument)
+    public OrderBookRequest(IInstrument instrument, int depth) : base(instrument)
     {
-        Depth = deal;
+        Depth = depth;
     }
 
     [JsonPropertyName("opcode")]

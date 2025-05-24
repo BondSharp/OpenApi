@@ -5,7 +5,7 @@ using BondSharp.OpenApi.Core.AbstractServices;
 using BondSharp.OpenApi.Core.Events;
 
 namespace BondSharp.OpenApi.Alor.Subscriptions;
-internal class DataMarket(
+internal class ClientEventProvider(
     EventsProvider eventsProvider,
     ReconnectionProvider reconnectionProvider,
     Subscriber requestsSubscriber
@@ -39,9 +39,9 @@ internal class DataMarket(
         requestsSubscriber.Subscribe(request);
     }
 
-    public void SubscribeOrderBook(IInstrument instrument)
+    public void SubscribeOrderBook(IInstrument instrument, int depth)
     {
-        var request = new OrderBookRequest(instrument, 20);
+        var request = new OrderBookRequest(instrument, depth);
 
         requestsSubscriber.Subscribe(request);
     }

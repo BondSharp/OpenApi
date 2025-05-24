@@ -43,7 +43,7 @@ public static class ServiceRegistration
     private static IServiceCollection AddSubscriptions(this IServiceCollection services)
     {
         return services
-            .AddScoped<IClientEventProvider, DataMarket>()
+            .AddScoped<IClientEventProvider, ClientEventProvider>()
             .AddTransient<WebSocketClientFactory>()
             .AddScoped<IWebsocketClient>(x => x.GetRequiredService<WebSocketClientFactory>().Factory())
             .AddScoped<Subscriber>()
