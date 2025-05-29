@@ -1,8 +1,9 @@
 ﻿using BonadSharp.OpenApi.Core.Data;
 using BonadSharp.OpenApi.Core.Instruments;
+using BondSharp.OpenApi.Core.Events;
 
 namespace BonadSharp.OpenApi.Core.Events;
-public abstract class MarketDataEvent<TData> : IInstrumentEvent, IMarketData where TData : IMarketData
+public abstract class MarketDataEvent<TData> : IInstrumentDataEvent, IMarketData where TData : IMarketData
 {
     public required TData Data { get; init; }
     public required IInstrument Instrument { get; init; }
