@@ -6,5 +6,4 @@ public interface IDeal : IMarketData
     int Quantity { get; }
     Side Side { get; }
     int OpenInterest { get; }
-    bool Existing { get; }
 }

@@ -9,6 +9,9 @@ public abstract class MarketDataEvent<TData> : IInstrumentDataEvent, IMarketData
     public required IInstrument Instrument { get; init; }
     public DateTime Timestamp => Data.Timestamp;
     public DateTime ReceivedAt => Data.ReceivedAt;
+
+    public bool Existing => Data.Existing;
+
     public override string ToString()
     {
         if (Timestamp == default(DateTime))

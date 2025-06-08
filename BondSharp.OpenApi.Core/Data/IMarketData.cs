@@ -3,4 +3,6 @@ public interface IMarketData
 {
     DateTime Timestamp { get; }
     DateTime ReceivedAt { get; }
+
+    bool Existing { get; }
 }

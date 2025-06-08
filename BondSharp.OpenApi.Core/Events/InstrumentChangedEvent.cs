@@ -10,4 +10,6 @@ public class InstrumentChangedEvent : IInstrumentDataEvent
     public required IInstrument Instrument { get; init; }
 
     public DateTime ReceivedAt => Data.ReceivedAt;
+
+    public bool Existing => false;
 }
