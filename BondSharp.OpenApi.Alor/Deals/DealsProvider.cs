@@ -13,10 +13,10 @@ internal class DealsProvider(ApiClient apiClient) : IDealsProvider
         var page = 0;
         while (true)
         {
-            var queryBuilder = new QueryBuilder();            
+            var queryBuilder = new QueryBuilder();
             queryBuilder.Add("format", "Slim");
             queryBuilder.Add("offset", (batchSize * page).ToString());
-            queryBuilder.Add("limit",batchSize.ToString());
+            queryBuilder.Add("limit", batchSize.ToString());
             if (from.HasValue)
             {
                 queryBuilder.Add("from", from.Value.ToUnixTimeSeconds().ToString());
@@ -31,7 +31,7 @@ internal class DealsProvider(ApiClient apiClient) : IDealsProvider
                 yield return deal;
             }
 
-            if(dealhistory.List.Count < batchSize)
+            if (dealhistory.List.Count < batchSize)
             {
                 break;
             }
@@ -39,10 +39,10 @@ internal class DealsProvider(ApiClient apiClient) : IDealsProvider
         }
     }
 
-    public async IAsyncEnumerable<IDeal> GetToday(IInstrument instrument, IDeal? withDeal, bool descending, int batchSize)
+    public async IAsyncEnumerable<IDeal[]> GetToday(IInstrument instrument, CancellationToken cancellation, IDeal? withDeal, bool descending, int batchSize)
     {
         int page = 0;
-        while (true)
+        while (!@cancellation.IsCancellationRequested)
         {
             var queryBuilder = new QueryBuilder();
             queryBuilder.Add("format", "Slim");
@@ -53,14 +53,9 @@ internal class DealsProvider(ApiClient apiClient) : IDealsProvider
             queryBuilder.Add("take", batchSize.ToString());
             queryBuilder.Add("offset", (batchSize * page).ToString());
             queryBuilder.Add("descending", descending.ToString());
-            var counter = 0;
-            await foreach (var deal in apiClient.GetValues<Deal>($"md/v2/Securities/MOEX/{instrument.Symbol}/alltrades", queryBuilder))
-            {
-                counter++;
-                yield return deal;
-            }
-
-            if (counter < batchSize)
+            var result = await apiClient.GetValues<Deal>($"md/v2/Securities/MOEX/{instrument.Symbol}/alltrades", queryBuilder).ToArrayAsync();
+            yield return result;
+            if (result.Length < batchSize)
             {
                 break;
             }
