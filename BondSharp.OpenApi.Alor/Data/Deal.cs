@@ -26,8 +26,8 @@ internal class Deal : IDeal
     public DateTime Timestamp { get; init; }
 
     [JsonPropertyName("h")]
-    public bool Existing { get; init; }
+    public bool Existing { get; set; }
 
     [JsonIgnore]
-    public DateTime ReceivedAt { get; set; } = DateTime.Now;
+    public TimeSpan Delay { get; set; } = TimeSpan.Zero;
 }

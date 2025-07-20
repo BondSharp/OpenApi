@@ -8,7 +8,5 @@ using BonadSharp.OpenApi.Core.Events;
 namespace BondSharp.OpenApi.Core.Events;
 public interface IInstrumentDataEvent : IInstrumentEvent
 {
-    DateTime ReceivedAt { get; }
-
     bool Existing { get; }
 }

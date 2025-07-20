@@ -21,5 +21,5 @@ internal class OrderBook : IOrderBook
     public required bool Existing { get; init; }
 
     [JsonIgnore]
-    public DateTime ReceivedAt { get; init; } = DateTime.Now;
+    public TimeSpan Delay { get; set; }
 }

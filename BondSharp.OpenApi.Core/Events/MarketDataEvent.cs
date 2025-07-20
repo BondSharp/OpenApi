@@ -8,7 +8,7 @@ public abstract class MarketDataEvent<TData> : IInstrumentDataEvent, IMarketData
     public required TData Data { get; init; }
     public required IInstrument Instrument { get; init; }
     public DateTime Timestamp => Data.Timestamp;
-    public DateTime ReceivedAt => Data.ReceivedAt;
+    public TimeSpan Delay => Data.Delay;
 
     public bool Existing => Data.Existing;
 

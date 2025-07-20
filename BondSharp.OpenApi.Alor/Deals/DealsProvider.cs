@@ -25,6 +25,7 @@ internal class DealsProvider(ApiClient apiClient) : IDealsProvider
             {
                 queryBuilder.Add("to", to.Value.ToUnixTimeSeconds().ToString());
             }
+
             var dealhistory = await apiClient.Get<DealsHistory>($"md/v2/Securities/MOEX/{instrument.Symbol}/alltrades/history", queryBuilder);
             foreach (var deal in dealhistory.List)
             {
@@ -54,6 +55,10 @@ internal class DealsProvider(ApiClient apiClient) : IDealsProvider
             queryBuilder.Add("offset", (batchSize * page).ToString());
             queryBuilder.Add("descending", descending.ToString());
             var result = await apiClient.GetValues<Deal>($"md/v2/Securities/MOEX/{instrument.Symbol}/alltrades", queryBuilder).ToArrayAsync();
+            foreach (var deal in result)
+            {
+                deal.Existing = true;
+            }
             yield return result;
             if (result.Length < batchSize)
             {

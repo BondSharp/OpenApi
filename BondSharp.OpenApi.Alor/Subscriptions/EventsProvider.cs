@@ -55,12 +55,14 @@ internal class EventsProvider(Subscriber requestsSubscriber, IWebsocketClient cl
         {
             var z = jsonElement.GetRawText();
             var orderBook = jsonElement.Deserialize<OrderBook>()!;
+            orderBook.Delay = DateTime.Now - orderBook.Timestamp;
             return new OrderBookEvent { Data = orderBook, Instrument = request.Instrument, Depth = orderBookRequest.Depth };
         }
 
         if (request is DealsRequest)
         {
             var deal = jsonElement.Deserialize<Deal>()!;
+            deal.Delay = DateTime.Now - deal.Timestamp;
             return new DealEvent() { Data = deal!, Instrument = request.Instrument };
         }
 

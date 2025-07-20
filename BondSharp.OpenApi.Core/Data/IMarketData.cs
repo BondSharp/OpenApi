@@ -2,7 +2,7 @@
 public interface IMarketData
 {
     DateTime Timestamp { get; }
-    DateTime ReceivedAt { get; }
+    TimeSpan Delay { get; }
 
     bool Existing { get; }
 }
