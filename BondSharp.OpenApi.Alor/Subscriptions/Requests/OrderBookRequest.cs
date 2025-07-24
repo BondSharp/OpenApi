@@ -14,4 +14,8 @@ internal class OrderBookRequest : MarketDataRequest
 
     [JsonPropertyName("opcode")]
     public override string OperationCode => "OrderBookGetAndSubscribe";
+
+
+    [JsonPropertyName("frequency")]
+    public int Frequency { get; } = 0;
 }
