@@ -16,6 +16,7 @@ internal abstract class BaseClient : IDisposable
         websocket = GetWebsocket(settings);
     }
     public IObservable<string> Messages => websocket.MessageReceived.Select(x => x.Text!);
+    public IObservable<ReconnectionType> ReconnectionTypes => websocket.ReconnectionHappened.Select(x => x.Type);
 
     public void Send(object request)
     {

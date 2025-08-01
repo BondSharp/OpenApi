@@ -1,13 +1,12 @@
-﻿using System.Text.Json;
-using BondSharp.OpenApi.Alor.Authorization;
+﻿using BondSharp.OpenApi.Alor.Authorization;
 using BondSharp.OpenApi.Alor.Subscriptions.Requests;
+using BondSharp.OpenApi.Alor.WebSockets;
 using BondSharp.OpenApi.Core.Events;
-using Websocket.Client;
 
 namespace BondSharp.OpenApi.Alor.Subscriptions;
 internal class Subscriber(
     TokenAuthorization tokenAuthorization,
-    IWebsocketClient client,
+    SubscriptionClient client,
     PingService pingService
     )
 {
@@ -62,7 +61,7 @@ internal class Subscriber(
     {
         var token = tokenAuthorization.Token();
         request.Token = token.AccessToken;
-        var json = JsonSerializer.Serialize(request, request.GetType());
-        client.Send(json);
+    
+        client.Send(request);
     }
 }

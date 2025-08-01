@@ -1,23 +1,23 @@
 ﻿using System.Reactive.Linq;
+using BondSharp.OpenApi.Alor.WebSockets;
 using BondSharp.OpenApi.Core.Events;
 using Websocket.Client;
 
 namespace BondSharp.OpenApi.Alor.Subscriptions;
-internal class ReconnectionProvider(IWebsocketClient client) : IObservable<ReconnectionEvent>
+internal class ReconnectionProvider(SubscriptionClient client) : IObservable<ReconnectionEvent>
 {
 
     public IDisposable Subscribe(IObserver<ReconnectionEvent> observer)
     {
- 
-        return client.ReconnectionHappened
-            .Where(x=>x.Type != ReconnectionType.Initial)
+
+        return client.ReconnectionTypes
+            .Where(type => type != ReconnectionType.Initial)
             .Select(Map)
             .Subscribe(observer);
     }
 
-    private ReconnectionEvent Map(ReconnectionInfo reconnectionInfo)
+    private ReconnectionEvent Map(ReconnectionType type)
     {
-
-        return new ReconnectionEvent() { Message = reconnectionInfo.Type.ToString() };
+        return new ReconnectionEvent() { Message = type.ToString() };
     }
 }

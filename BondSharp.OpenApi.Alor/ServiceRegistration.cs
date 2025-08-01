@@ -44,23 +44,16 @@ public static class ServiceRegistration
     {
         return services
             .AddScoped<IClientEventProvider, ClientEventProvider>()
-            .AddTransient<WebSocketClientFactory>()
-            .AddScoped<IWebsocketClient>(GetWebsocketClient)
             .AddScoped<OrderClient>()
+            .AddScoped<SubscriptionClient>()
             .AddScoped<Subscriber>()
             .AddScoped<EventsProvider>()
             .AddScoped<ReconnectionProvider>()
             .AddScoped<PingService>()
             .AddScoped<IOrderManager, OrderManager>();
-    }
-
-    private static IWebsocketClient GetWebsocketClient(IServiceProvider provider)
-    {
-        var factory = provider.GetRequiredService<WebSocketClientFactory>();
-
-        return factory.Factory();
 
     }
+
 
     private static IServiceCollection AddCommon(this IServiceCollection services)
     {

@@ -4,38 +4,37 @@ using BonadSharp.OpenApi.Core.Data;
 using BonadSharp.OpenApi.Core.Events;
 using BondSharp.OpenApi.Alor.Data;
 using BondSharp.OpenApi.Alor.Subscriptions.Requests;
+using BondSharp.OpenApi.Alor.WebSockets;
 using BondSharp.OpenApi.Core.Events;
-using Websocket.Client;
 
 namespace BondSharp.OpenApi.Alor.Subscriptions;
-internal class EventsProvider(Subscriber requestsSubscriber, IWebsocketClient client) : IObservable<IEvent>
+internal class EventsProvider(Subscriber requestsSubscriber, SubscriptionClient client) : IObservable<IEvent>
 {
     public IDisposable Subscribe(IObserver<IEvent> observer)
     {
-        return client.MessageReceived
+        return client.Messages
             .Select(Parse)
             .Subscribe(observer);
     }
 
-    private IEvent Parse(ResponseMessage responseMessage)
+    private IEvent Parse(string json)
     {
-        if (responseMessage.Text!.StartsWith("{ \"data"))
+        if (json.StartsWith("{ \"data"))
         {
-            ParseMessage(responseMessage);
-            return ParseMessage(responseMessage);
+            return ParseMessage(json);
         }
-        if (responseMessage.Text.StartsWith("{\"requestGuid"))
+        if (json.StartsWith("{\"requestGuid"))
         {
-            var notification = ParseNotification(responseMessage);
+            var notification = ParseNotification(json);
             return notification;
         }
 
-        throw new ArgumentException(nameof(responseMessage));
+        throw new ArgumentException(nameof(json));
     }
 
-    private IEvent ParseMessage(ResponseMessage responseMessage)
+    private IEvent ParseMessage(string json)
     {
-        using var jsonDocument = JsonDocument.Parse(responseMessage.Text!);
+        using var jsonDocument = JsonDocument.Parse(json);
 
         var data = jsonDocument.RootElement.GetProperty("data");
         var guid = jsonDocument.RootElement.GetProperty("guid").GetGuid();
@@ -71,9 +70,9 @@ internal class EventsProvider(Subscriber requestsSubscriber, IWebsocketClient cl
         throw new ArgumentException(nameof(request));
     }
 
-    private IEvent ParseNotification(ResponseMessage responseMessage)
+    private IEvent ParseNotification(string json)
     {
-        var notifaction = JsonSerializer.Deserialize<Notification>(responseMessage.Text!)!;
+        var notifaction = JsonSerializer.Deserialize<Notification>(json)!;
         var request = requestsSubscriber.FindRequest(notifaction.RequestGuid);
         if (request != null)
         {
