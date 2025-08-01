@@ -15,7 +15,7 @@ internal class Subscriber(
 
     public MarketDataRequest? FindRequest(Guid guid)
     {
-        return requests.GetValueOrDefault(guid,null);
+        return requests.GetValueOrDefault(guid);
     }
 
     public bool TryPingParse(Guid guid, out PingEvent pingEvent)
@@ -25,7 +25,8 @@ internal class Subscriber(
         {
             pingEvent = new PingEvent() { Delay = delay };
             return true;
-        };
+        }
+        ;
         pingEvent = null!;
         return false;
 
@@ -53,7 +54,7 @@ internal class Subscriber(
 
     public void SendPing()
     {
-        var ping = new PingRequest() { Guid = pingService.CreateGuidRequest()};
+        var ping = new PingRequest() { Guid = pingService.CreateGuidRequest() };
         Send(ping);
     }
 

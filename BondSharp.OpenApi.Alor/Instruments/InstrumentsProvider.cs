@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Text.Json;
+﻿using System.Text.Json;
 using BonadSharp.OpenApi.Core.AbstractServices;
 using BonadSharp.OpenApi.Core.Instruments;
 using BondSharp.Domain.Instruments;
@@ -32,6 +31,7 @@ internal class InstrumentsProvider(ApiClient alorApi) : IInstrumentsProvider
         var queryBuilder = new QueryBuilder();
         queryBuilder.Add("format", "Slim");
         var json = await alorApi.Get<JsonDocument>($"md/v2/Securities/MOEX/{symbol}", queryBuilder);
+  
         var instrument = Parser(json);
         return (T)(IInstrument)instrument;
     }

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.Metrics;
-using BonadSharp.OpenApi.Core.Instruments;
+﻿using BonadSharp.OpenApi.Core.Instruments;
 using BondSharp.Domain.Instruments;
 using BondSharp.OpenApi.Domain.Instruments;
 

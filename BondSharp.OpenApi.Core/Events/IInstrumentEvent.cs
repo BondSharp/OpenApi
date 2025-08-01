@@ -1,5 +1,4 @@
-﻿using BonadSharp.OpenApi.Core.Data;
-using BonadSharp.OpenApi.Core.Instruments;
+﻿using BonadSharp.OpenApi.Core.Instruments;
 using BondSharp.OpenApi.Core.Events;
 
 namespace BonadSharp.OpenApi.Core.Events;

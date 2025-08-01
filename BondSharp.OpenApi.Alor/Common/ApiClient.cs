@@ -4,23 +4,16 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 
 namespace BondSharp.OpenApi.Alor.Common;
-internal class ApiClient
+internal class ApiClient(TokenAuthorization tokenAuthorization, Settings settings)
 {
-    private readonly TokenAuthorization tokenAuthorization;
-    private readonly bool isProduction;
+    private readonly bool isProduction = settings.IsProduction;
 
     private const string developmentAddress = "https://apidev.alor.ru";
     private const string productionAddress = "https://api.alor.ru";
 
-    public ApiClient(TokenAuthorization tokenAuthorization, Settings settings)
-    {
-        this.tokenAuthorization = tokenAuthorization;
-        isProduction = settings.IsProduction;
-    }
-
     public async Task<T> Get<T>(string path)
     {
-        return await Get<T>(path, new QueryBuilder());
+        return await Get<T>(path, []);
     }
     public async Task<T> Get<T>(string path, QueryBuilder query)
     {

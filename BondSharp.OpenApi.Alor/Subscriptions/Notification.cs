@@ -1,5 +1,4 @@
 ﻿using System.Text.Json.Serialization;
-using BondSharp.OpenApi.Core.Data;
 
 namespace BondSharp.OpenApi.Alor.Subscriptions;
 internal class Notification

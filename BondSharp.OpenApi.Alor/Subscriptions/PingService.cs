@@ -1,6 +1,4 @@
-﻿using BondSharp.OpenApi.Alor.Subscriptions.Requests;
-
-namespace BondSharp.OpenApi.Alor.Subscriptions;
+﻿namespace BondSharp.OpenApi.Alor.Subscriptions;
 internal class PingService
 {
     private Byte[] randomBytes = new byte[8];

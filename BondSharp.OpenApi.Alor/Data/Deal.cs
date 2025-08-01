@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using BonadSharp.OpenApi.Core.Data;
 
 namespace BondSharp.OpenApi.Alor.Data;

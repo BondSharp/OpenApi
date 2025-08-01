@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BonadSharp.OpenApi.Core.Data;
-using BondSharp.OpenApi.Alor.Data;
+﻿using BondSharp.OpenApi.Alor.Data;
 
 namespace BondSharp.OpenApi.Alor.Deals;
 

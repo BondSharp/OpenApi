@@ -1,7 +1,4 @@
-﻿
-
-using System.Text.Json.Serialization;
-using BonadSharp.OpenApi.Core.Instruments;
+﻿using BonadSharp.OpenApi.Core.Instruments;
 
 namespace BondSharp.OpenApi.Alor.Instruments;
 internal class Future : Instrument, IFuture

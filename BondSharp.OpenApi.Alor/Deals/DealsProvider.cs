@@ -1,4 +1,5 @@
-﻿using BonadSharp.OpenApi.Core.Data;
+﻿using System.Runtime.CompilerServices;
+using BonadSharp.OpenApi.Core.Data;
 using BonadSharp.OpenApi.Core.Instruments;
 using BondSharp.OpenApi.Alor.Common;
 using BondSharp.OpenApi.Alor.Data;
@@ -39,8 +40,8 @@ internal class DealsProvider(ApiClient apiClient) : IDealsProvider
             page++;
         }
     }
-
-    public async IAsyncEnumerable<IDeal[]> GetToday(IInstrument instrument, CancellationToken cancellation, IDeal? withDeal, bool descending, int batchSize)
+    
+    public async IAsyncEnumerable<IDeal[]> GetToday(IInstrument instrument,[EnumeratorCancellation] CancellationToken cancellation, IDeal? withDeal, bool descending, int batchSize)
     {
         int page = 0;
         while (!@cancellation.IsCancellationRequested)

@@ -1,9 +1,10 @@
-﻿using System.Net.Http.Json;
-using Microsoft.Extensions.Options;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Json;
+using BondSharp.OpenApi.Alor.Data;
 
 namespace BondSharp.OpenApi.Alor.Authorization;
 
-internal class TokenAuthorization
+internal sealed class TokenAuthorization
 {
     private const string developmentAddress = "https://oauthdev.alor.ru";
     private const string productionAddress = "https://oauth.alor.ru";
@@ -45,6 +46,21 @@ internal class TokenAuthorization
                 throw new NullReferenceException(nameof(token));
             };
             return token;
+        }
+    }
+
+
+
+    public IEnumerable<Portfolio> GetPortfolios()
+    {
+        var accessToken = token.Result.AccessToken;
+
+        var handler = new JwtSecurityTokenHandler();
+        var jwtSecurityToken = handler.ReadJwtToken(accessToken);
+        var values = jwtSecurityToken.Claims.First(x => x.Type == "portfolios").Value.Split(" ");
+        foreach (var value in values)
+        {
+            yield return new Portfolio() { Number = value };
         }
     }
 }

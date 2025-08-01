@@ -30,4 +30,9 @@ public struct Offer : IComparable<Offer>, IEquatable<Offer>
         }
         return base.Equals(obj);
     }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Price, Volume);
+    }
 }

@@ -1,13 +1,13 @@
-﻿
-using AlorClient;
+﻿using AlorClient;
 using BonadSharp.OpenApi.Core.AbstractServices;
 using BondSharp.OpenApi.Alor.Authorization;
 using BondSharp.OpenApi.Alor.Common;
 using BondSharp.OpenApi.Alor.Deals;
 using BondSharp.OpenApi.Alor.Instruments;
+using BondSharp.OpenApi.Alor.Orders;
 using BondSharp.OpenApi.Alor.Subscriptions;
+using BondSharp.OpenApi.Alor.WebSockets;
 using BondSharp.OpenApi.Core.AbstractServices;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
@@ -45,11 +45,21 @@ public static class ServiceRegistration
         return services
             .AddScoped<IClientEventProvider, ClientEventProvider>()
             .AddTransient<WebSocketClientFactory>()
-            .AddScoped<IWebsocketClient>(x => x.GetRequiredService<WebSocketClientFactory>().Factory())
+            .AddScoped<IWebsocketClient>(GetWebsocketClient)
+            .AddScoped<OrderClient>()
             .AddScoped<Subscriber>()
             .AddScoped<EventsProvider>()
             .AddScoped<ReconnectionProvider>()
-            .AddScoped<PingService>();
+            .AddScoped<PingService>()
+            .AddScoped<IOrderManager, OrderManager>();
+    }
+
+    private static IWebsocketClient GetWebsocketClient(IServiceProvider provider)
+    {
+        var factory = provider.GetRequiredService<WebSocketClientFactory>();
+
+        return factory.Factory();
+
     }
 
     private static IServiceCollection AddCommon(this IServiceCollection services)

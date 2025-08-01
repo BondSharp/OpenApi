@@ -1,12 +1,9 @@
 ﻿using System.Reactive.Linq;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using BonadSharp.OpenApi.Core.Data;
 using BonadSharp.OpenApi.Core.Events;
 using BondSharp.OpenApi.Alor.Data;
 using BondSharp.OpenApi.Alor.Subscriptions.Requests;
-using BondSharp.OpenApi.Core.AbstractServices;
-using BondSharp.OpenApi.Core.Data;
 using BondSharp.OpenApi.Core.Events;
 using Websocket.Client;
 
