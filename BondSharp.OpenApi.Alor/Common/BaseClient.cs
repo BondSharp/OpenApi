@@ -1,9 +1,8 @@
 ﻿using System.Net.WebSockets;
 using System.Reactive.Linq;
-using System.Text.Json;
 using Websocket.Client;
 
-namespace BondSharp.OpenApi.Alor.WebSockets;
+namespace BondSharp.OpenApi.Alor.Common;
 internal abstract class BaseClient : IDisposable
 {
     private IWebsocketClient websocket;
@@ -15,14 +14,10 @@ internal abstract class BaseClient : IDisposable
     {
         websocket = GetWebsocket(settings);
     }
-    public IObservable<string> Messages => websocket.MessageReceived.Select(x => x.Text!);
+    protected IObservable<string> Messages => websocket.MessageReceived.Select(x => x.Text!);
     public IObservable<ReconnectionType> ReconnectionTypes => websocket.ReconnectionHappened.Select(x => x.Type);
 
-    public void Send(object request)
-    {
-        var json = JsonSerializer.Serialize(request, request.GetType());
-        websocket.Send(json);
-    }
+    protected void Send(string json) => websocket.Send(json);
 
     private IWebsocketClient GetWebsocket(Settings settings)
     {

@@ -1,5 +1,4 @@
 ﻿using System.Reactive.Linq;
-using BondSharp.OpenApi.Alor.WebSockets;
 using BondSharp.OpenApi.Core.Events;
 using Websocket.Client;
 

@@ -6,12 +6,10 @@ using BondSharp.OpenApi.Alor.Deals;
 using BondSharp.OpenApi.Alor.Instruments;
 using BondSharp.OpenApi.Alor.Orders;
 using BondSharp.OpenApi.Alor.Subscriptions;
-using BondSharp.OpenApi.Alor.WebSockets;
 using BondSharp.OpenApi.Core.AbstractServices;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using Websocket.Client;
 
 namespace BondSharp.OpenApi.Alor;
 
@@ -43,13 +41,11 @@ public static class ServiceRegistration
     private static IServiceCollection AddSubscriptions(this IServiceCollection services)
     {
         return services
-            .AddScoped<IClientEventProvider, ClientEventProvider>()
+            .AddScoped<IClientEventProvider, EventProvider>()
             .AddScoped<OrderClient>()
             .AddScoped<SubscriptionClient>()
-            .AddScoped<Subscriber>()
-            .AddScoped<EventsProvider>()
+            .AddScoped<SubscriptionCollection>()
             .AddScoped<ReconnectionProvider>()
-            .AddScoped<PingService>()
             .AddScoped<IOrderManager, OrderManager>();
 
     }

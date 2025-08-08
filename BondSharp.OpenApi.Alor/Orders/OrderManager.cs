@@ -1,13 +1,11 @@
 ﻿using BondSharp.OpenApi.Alor.Authorization;
 using BondSharp.OpenApi.Core.AbstractServices;
 using System.Reactive.Linq;
-using System.Text.Json;
 using BonadSharp.OpenApi.Core.Instruments;
 using BonadSharp.OpenApi.Core.Data;
 using BondSharp.OpenApi.Core.Data;
 using BondSharp.OpenApi.Alor.Data;
 using BondSharp.OpenApi.Alor.Orders.Data;
-using BondSharp.OpenApi.Alor.WebSockets;
 using System.Reactive.Threading.Tasks;
 
 namespace BondSharp.OpenApi.Alor.Orders;
@@ -21,7 +19,8 @@ internal class OrderManager : IOrderManager
     {
         this.tokenAuthorization = tokenAuthorization;
         this.client = client;
-        portfolio = new Portfolio() { Number = "" }; 
+        var account = tokenAuthorization.GetAccounts().Single(x => x.Number.StartsWith("D"));
+        portfolio = account;
     }
     public async Task LogIn()
     {
@@ -31,7 +30,7 @@ internal class OrderManager : IOrderManager
             OperationCode = "authorize",
             Token = accessToken,
         };
-        await Send<EmptyResponce>(request);
+        await Send(request);
     }
 
     public async Task<string> Market(IInstrument instrument, int volume, Side side, string? oldOrderId)
@@ -46,9 +45,9 @@ internal class OrderManager : IOrderManager
             OrderId = oldOrderId,
             Portfolio = portfolio
         };
-        var result = await Send<OrderNumberResponse>(orderPost);
+        var result = await SendOrder(orderPost);
 
-        return result.OrderNumber;
+        return result;
     }
 
     public async Task<string> Limit(IInstrument instrument, int volume, Side side, double price, string? oldOrderId)
@@ -63,9 +62,9 @@ internal class OrderManager : IOrderManager
             Portfolio = portfolio,
             Price = price
         };
-        var result = await Send<OrderNumberResponse>(orderPost);
+        var result = await SendOrder(orderPost);
 
-        return result.OrderNumber;
+        return result;
     }
 
     public async Task<string> Stop(IInstrument instrument, int volume, Side side, ConditionPrice conditionPrice, double triggerPrice, string? oldOrderId)
@@ -81,9 +80,9 @@ internal class OrderManager : IOrderManager
             Condition = conditionPrice,
             TriggerPrice = triggerPrice
         };
-        var result = await Send<OrderNumberResponse>(orderPost);
+        var result = await SendOrder(orderPost);
 
-        return result.OrderNumber;
+        return result;
     }
 
     public async Task<string> StopLimit(IInstrument instrument, int volume, Side side, ConditionPrice conditionPrice, double price, double triggerPrice, string? oldOrderId)
@@ -100,9 +99,9 @@ internal class OrderManager : IOrderManager
             TriggerPrice = triggerPrice,
             Price = price
         };
-        var result = await Send<OrderNumberResponse>(orderPost);
+        var result = await SendOrder(orderPost);
 
-        return result.OrderNumber;
+        return result;
     }
 
     public Task DeleteMarket(string orderId)
@@ -128,31 +127,34 @@ internal class OrderManager : IOrderManager
     private Task Delete(string operationName, string orderId)
     {
         var deleteRequest = new DeleteRequest() { OperationCode = operationName, OrderId = orderId, Portfolio = portfolio };
-        return Send<OrderNumberResponse>(deleteRequest);
+        return SendOrder(deleteRequest);
     }
 
-    private async Task<TResponce> Send<TResponce>(BaseRequest request) where TResponce : EmptyResponce
+    private async Task<string> SendOrder(BaseRequest request)
     {
-        var responce = GetResponce<TResponce>(request);
+        var responce = (OrderNumberResponse)(await Send(request));
+
+        return responce.OrderId;
+    }
+
+    private async Task<EmptyResponce> Send(BaseRequest request)
+    {
+        var responce = GetResponce(request);
         client.Send(request);
         return await responce;
     }
 
-    private async Task<TResponce> GetResponce<TResponce>(BaseRequest request) where TResponce : EmptyResponce
+    private async Task<EmptyResponce> GetResponce(BaseRequest request)
     {
-        var guid = request.Guid.ToString().ToLower();
-        var startString = $"{{\"requestGuid\":\"{guid}";
-        var json = await client.Messages
-            .FirstAsync(json => json.StartsWith(startString))
+        var result = await client.Responces
+            .FirstAsync(responce => responce.RequestGuid == request.Guid)
             .Timeout(TimeSpan.FromSeconds(3)).ToTask();
-        var result = JsonSerializer.Deserialize<TResponce>(json)!;
-        if (result.HttpCode != 200)
+
+        if (result.Code != 200)
         {
-            throw new Exception($"Responce {result.Message} with code {result.HttpCode}");
-        };
+            throw new Exception($"Responce {result.Message} with code {result.Code}");
+        }
+        ;
         return result;
     }
-
-
-
 }

@@ -51,7 +51,7 @@ internal sealed class TokenAuthorization
 
 
 
-    public IEnumerable<Portfolio> GetPortfolios()
+    public IEnumerable<Portfolio> GetAccounts()
     {
         var accessToken = token.Result.AccessToken;
 

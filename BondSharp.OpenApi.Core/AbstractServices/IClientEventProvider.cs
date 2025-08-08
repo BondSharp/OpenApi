@@ -6,10 +6,16 @@ public interface IClientEventProvider
 {
     IObservable<IEvent> Events { get; }
     IObservable<ReconnectionEvent> Reconnections { get; }
-    void SubscribeOrderBook(IInstrument instrument, int depth);
-    void SubscribeDeal(IInstrument instrument);
-    void SubscribeInstrumentChanged(IInstrument instrument);
-    void Ping();
-    void Resubscribe();
+    void AddOrderBook(IInstrument instrument, int depth);
+    void AddDeal(IInstrument instrument);
+    void AddInstrumentChanged(IInstrument instrument);
+    Task<TimeSpan> Ping();
+
+    Task Subscribe();
+
+    void AddOwnDeal(string account);
+
+    void AddOrders(string account);
+
 
 }

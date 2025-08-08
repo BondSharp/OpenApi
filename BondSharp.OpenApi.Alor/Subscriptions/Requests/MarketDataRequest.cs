@@ -2,21 +2,13 @@
 using BonadSharp.OpenApi.Core.Instruments;
 
 namespace BondSharp.OpenApi.Alor.Subscriptions.Requests;
-internal abstract class MarketDataRequest : BaseRequest
+internal abstract class MarketDataRequest : SubscriptionRequest
 {
- 
-
-    [JsonPropertyName("format")]
-    public string Format => "Slim";
-
     [JsonIgnore]
     public IInstrument Instrument { get; }
 
     [JsonPropertyName("code")]
     public string Code => Instrument.Symbol;
-
-    [JsonPropertyName("exchange")]
-    public string Exchange => "MOEX";
 
     public MarketDataRequest(IInstrument instrument)
     {

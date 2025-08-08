@@ -29,4 +29,7 @@ internal class Deal : IDeal
 
     [JsonIgnore]
     public TimeSpan Delay { get; set; } = TimeSpan.Zero;
+
+    [JsonPropertyName("eid")]
+    public string? OrderId { get; init; }
 }

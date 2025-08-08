@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace BondSharp.OpenApi.Alor.Subscriptions;
-internal class Notification
+namespace BondSharp.OpenApi.Alor.Data;
+internal class EmptyResponce
 {
     [JsonPropertyName("requestGuid")]
     public Guid RequestGuid { get; init; }
