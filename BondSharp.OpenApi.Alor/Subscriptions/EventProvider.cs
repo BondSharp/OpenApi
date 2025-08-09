@@ -1,7 +1,4 @@
-﻿
-using System.Reactive.Linq;
-using BonadSharp.OpenApi.Core.Instruments;
-using BondSharp.OpenApi.Alor.Data;
+﻿using BonadSharp.OpenApi.Core.Instruments;
 using BondSharp.OpenApi.Alor.Subscriptions.Requests;
 using BondSharp.OpenApi.Core.AbstractServices;
 using BondSharp.OpenApi.Core.Events;
@@ -60,32 +57,22 @@ internal class EventProvider(
 
     public async Task Subscribe()
     {
-        var count = subscriptions.Count();
-        var reponces = client.responces.Take(count).ToArray().Timeout(TimeSpan.FromSeconds(5));
+        var list = new List<Task>();
         foreach (var subscription in subscriptions.All())
         {
-            client.Send(subscription);
+            var task = client.Send(subscription);
+            list.Add(task);
         }
-        Checks(await reponces);
+
+        await Task.WhenAll(list);
     }
 
-    private void Checks(EmptyResponce[] emptyResponces)
+    async Task Subscribe(BaseRequest subscription)
     {
-        var guidInResponces = emptyResponces.ToDictionary(x => x.RequestGuid);
-
-        foreach (var subscription in subscriptions.All())
+        var responce = await client.Send(subscription);
+        if (responce.Code != 200)
         {
-            if (guidInResponces.TryGetValue(subscription.Guid, out EmptyResponce? responce))
-            {
-                if (responce.Code != 200)
-                {
-                    throw new Exception(responce.ToString());
-                }
-            }
-            else
-            {
-                throw new Exception($"Not Found Guid {subscription.Guid} ");
-            }
+            throw new Exception(responce.ToString());
         }
     }
 }

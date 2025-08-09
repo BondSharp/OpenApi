@@ -7,56 +7,65 @@ using BondSharp.OpenApi.Alor.Subscriptions.Requests;
 using BondSharp.OpenApi.Core.Events;
 
 namespace BondSharp.OpenApi.Alor.Subscriptions;
-internal class SubscriptionClient(Settings settings, SubscriptionCollection subscriber, TokenAuthorization authorization) : BaseClient(settings)
+internal class SubscriptionClient : BaseClient
 {
     protected override string ProductionAddress => "wss://api.alor.ru/ws";
 
     protected override string DevelopmentAddress => "wss://apidev.alor.ru/ws";
 
+    private readonly IObservable<object> objects;//= Messages.Select(x => (object)x);
+    private readonly SubscriptionCollection subscriber;
+    private readonly TokenAuthorization authorization;
 
-    public IObservable<IEvent> Events => GetMessages(true).Select(Parse);
-
-    public IObservable<EmptyResponce> responces => GetMessages(true).Select(ParseNotification);
-
-    private IObservable<string> GetMessages(bool isResponce)
+    public SubscriptionClient(Settings settings, SubscriptionCollection subscriber, TokenAuthorization authorization) : base(settings)
     {
-        return Messages
-            .Where(json => json.StartsWith("{\"requestGuid", StringComparison.OrdinalIgnoreCase) == isResponce);
+        this.subscriber = subscriber;
+        this.authorization = authorization;
+        this.objects = Messages.Select(Parse).Publish().RefCount();
+        this.Events = objects.OfType<IEvent>().Publish().RefCount();
+        this.Responces = objects.OfType<EmptyResponce>().Publish().RefCount();
     }
 
-    private EmptyResponce ParseNotification(string json) => JsonSerializer.Deserialize<EmptyResponce>(json)!;
+    public IObservable<IEvent> Events { get; }
 
-    private IEvent Parse(string json)
+    private IObservable<EmptyResponce> Responces { get; }
+
+    private object Parse(string json)
     {
         using var jsonDocument = JsonDocument.Parse(json);
+        if (jsonDocument.RootElement.TryGetProperty("requestGuid", out var _))
+        {
+            var reponce = jsonDocument.Deserialize<EmptyResponce>();
+            return reponce!;
+        }
+
         var data = jsonDocument.RootElement.GetProperty("data");
         var guid = jsonDocument.RootElement.GetProperty("guid").GetGuid();
         var subscription = subscriber.FindRequest(guid) ?? throw new Exception($"Not Found Request  {guid}");
-        var message = subscription.GetEvent(data);
-
-        return message;
+        var @event = subscription.GetEvent(data);
+        return @event;
     }
 
     public async Task<TimeSpan> Ping()
     {
         var datatime = DateTime.Now;
         var ping = new PingRequest();
-        var reponce = responces
-            .Where(x => x.RequestGuid == ping.Guid)
-            .FirstAsync()
-            .Timeout(TimeSpan.FromSeconds(3));
-        Send(ping);
-
-        await reponce;
+        await Send(ping);
 
         return DateTime.Now - datatime;
     }
 
-    public void Send(BaseRequest request)
+    public async Task<EmptyResponce> Send(BaseRequest request)
     {
         var token = authorization.Token();
         request.Token = token.AccessToken;
         var json = JsonSerializer.Serialize(request, request.GetType());
+        var reponce = Responces
+          .Where(x => x.RequestGuid == request.Guid)
+          .FirstAsync()
+          .Timeout(TimeSpan.FromSeconds(3));
         Send(json);
+
+        return await reponce;
     }
 }

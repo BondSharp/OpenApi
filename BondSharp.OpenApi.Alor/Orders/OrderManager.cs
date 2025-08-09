@@ -6,7 +6,6 @@ using BonadSharp.OpenApi.Core.Data;
 using BondSharp.OpenApi.Core.Data;
 using BondSharp.OpenApi.Alor.Data;
 using BondSharp.OpenApi.Alor.Orders.Data;
-using System.Reactive.Threading.Tasks;
 
 namespace BondSharp.OpenApi.Alor.Orders;
 internal class OrderManager : IOrderManager
@@ -139,22 +138,14 @@ internal class OrderManager : IOrderManager
 
     private async Task<EmptyResponce> Send(BaseRequest request)
     {
-        var responce = GetResponce(request);
-        client.Send(request);
-        return await responce;
-    }
 
-    private async Task<EmptyResponce> GetResponce(BaseRequest request)
-    {
-        var result = await client.Responces
-            .FirstAsync(responce => responce.RequestGuid == request.Guid)
-            .Timeout(TimeSpan.FromSeconds(3)).ToTask();
-
-        if (result.Code != 200)
+        var reponce = await client.Send(request);
+        if (reponce.Code != 200)
         {
-            throw new Exception($"Responce {result.Message} with code {result.Code}");
+            throw new Exception($"Responce {reponce.Message} with code {reponce.Code}");
         }
-        ;
-        return result;
+        return reponce;
     }
+
+
 }
