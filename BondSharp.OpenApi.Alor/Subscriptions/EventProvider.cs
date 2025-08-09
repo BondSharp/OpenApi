@@ -15,7 +15,7 @@ internal class EventProvider(
     ) : IClientEventProvider
 {
 
-    public IObservable<IEvent> Events => client.GetEvents();
+    public IObservable<IEvent> Events => client.Events;
 
     public IObservable<ReconnectionEvent> Reconnections => reconnectionProvider;
 
@@ -61,7 +61,7 @@ internal class EventProvider(
     public async Task Subscribe()
     {
         var count = subscriptions.Count();
-        var reponces = client.GetNotification().Take(count).ToArray().Timeout(TimeSpan.FromSeconds(5));
+        var reponces = client.responces.Take(count).ToArray().Timeout(TimeSpan.FromSeconds(5));
         foreach (var subscription in subscriptions.All())
         {
             client.Send(subscription);

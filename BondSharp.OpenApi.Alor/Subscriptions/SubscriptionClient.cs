@@ -9,28 +9,19 @@ using BondSharp.OpenApi.Core.Events;
 namespace BondSharp.OpenApi.Alor.Subscriptions;
 internal class SubscriptionClient(Settings settings, SubscriptionCollection subscriber, TokenAuthorization authorization) : BaseClient(settings)
 {
-    private readonly SubscriptionCollection subscriber = subscriber;
-
     protected override string ProductionAddress => "wss://api.alor.ru/ws";
 
     protected override string DevelopmentAddress => "wss://apidev.alor.ru/ws";
 
 
-    public IObservable<IEvent> GetEvents()
-    {
-        return Messages
-              .Where(json => json.StartsWith("{\"data"))
-            .Select(Parse);
-    }
+    public IObservable<IEvent> Events => GetMessages(true).Select(Parse);
 
-    public IObservable<EmptyResponce> GetNotification()
+    public IObservable<EmptyResponce> responces => GetMessages(true).Select(ParseNotification);
+
+    private IObservable<string> GetMessages(bool isResponce)
     {
         return Messages
-            .Where(json => {
-                Console.WriteLine(json);
-                return json.StartsWith("{\"requestGuid");
-                })
-          .Select(ParseNotification);
+            .Where(json => json.StartsWith("{\"requestGuid", StringComparison.OrdinalIgnoreCase) == isResponce);
     }
 
     private EmptyResponce ParseNotification(string json) => JsonSerializer.Deserialize<EmptyResponce>(json)!;
@@ -50,7 +41,7 @@ internal class SubscriptionClient(Settings settings, SubscriptionCollection subs
     {
         var datatime = DateTime.Now;
         var ping = new PingRequest();
-        var reponce = GetNotification()
+        var reponce = responces
             .Where(x => x.RequestGuid == ping.Guid)
             .FirstAsync()
             .Timeout(TimeSpan.FromSeconds(3));
