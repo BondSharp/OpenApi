@@ -60,7 +60,7 @@ internal class EventProvider(
         var list = new List<Task>();
         foreach (var subscription in subscriptions.All())
         {
-            var task = client.Send(subscription);
+            var task = Subscribe(subscription);
             list.Add(task);
         }
 
