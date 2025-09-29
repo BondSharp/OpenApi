@@ -21,7 +21,7 @@ internal class Deal : IDeal
     public int OpenInterest { get; init; }
 
     [JsonPropertyName("t")]
-    [JsonConverter(typeof(TimestampJsonConverter))]
+    [JsonConverter(typeof(MillisecondsJsonConverter))]
     public DateTime Timestamp { get; init; }
 
     [JsonPropertyName("h")]

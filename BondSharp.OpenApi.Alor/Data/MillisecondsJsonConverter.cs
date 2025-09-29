@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace BondSharp.OpenApi.Alor.Data;
 
-internal class TimestampJsonConverter : JsonConverter<DateTime>
+internal class MillisecondsJsonConverter : JsonConverter<DateTime>
 {
     public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {

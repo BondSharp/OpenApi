@@ -14,7 +14,7 @@ internal class OrderBook : IOrderBook
     public required Offer[] Asks { get; init; }
 
     [JsonPropertyName("t")]
-    [JsonConverter(typeof(TimestampJsonConverter))]
+    [JsonConverter(typeof(MillisecondsJsonConverter))]
     public required DateTime Timestamp { get; init; }
 
     [JsonPropertyName("h")]

@@ -21,4 +21,8 @@
     <ProjectReference Include="..\BondSharp.OpenApi.Core\BondSharp.OpenApi.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Deals\" />
+  </ItemGroup>
+
 </Project>

@@ -1,6 +1,6 @@
 ﻿using BondSharp.OpenApi.Alor.Data;
 
-namespace BondSharp.OpenApi.Alor.Deals;
+namespace BondSharp.OpenApi.Alor.Providers;
 
 internal class DealsHistory
 {

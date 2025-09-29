@@ -2,9 +2,9 @@
 using BonadSharp.OpenApi.Core.AbstractServices;
 using BondSharp.OpenApi.Alor.Authorization;
 using BondSharp.OpenApi.Alor.Common;
-using BondSharp.OpenApi.Alor.Deals;
 using BondSharp.OpenApi.Alor.Instruments;
 using BondSharp.OpenApi.Alor.Orders;
+using BondSharp.OpenApi.Alor.Providers;
 using BondSharp.OpenApi.Alor.Subscriptions;
 using BondSharp.OpenApi.Core.AbstractServices;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,11 +22,11 @@ public static class ServiceRegistration
         var services = builder.Services;
         var config = builder.Configuration.GetSection(configKey);
         services
-           .Configure<Settings>(config)
-           .AddSingleton<Settings>(provider => provider.GetRequiredService<IOptions<Settings>>().Value)
-           .AddCommon()
-           .AddSubscriptions()
-           .AddProviers();
+            .Configure<Settings>(config)
+            .AddSingleton<Settings>(provider => provider.GetRequiredService<IOptions<Settings>>().Value)
+            .AddCommon()
+            .AddSubscriptions()
+            .AddProviers();
 
         return builder;
     }
@@ -34,8 +34,10 @@ public static class ServiceRegistration
     private static IServiceCollection AddProviers(this IServiceCollection services)
     {
         return
-            services.AddTransient<IInstrumentsProvider, InstrumentsProvider>()
-            .AddTransient<IDealsProvider, DealsProvider>();
+            services
+                .AddTransient<IInstrumentsProvider, InstrumentsProvider>()
+                .AddTransient<ICandleProvider, CandleProvider>()
+                .AddTransient<IDealsProvider, DealsProvider>();
     }
 
     private static IServiceCollection AddSubscriptions(this IServiceCollection services)
@@ -47,16 +49,15 @@ public static class ServiceRegistration
             .AddScoped<SubscriptionCollection>()
             .AddScoped<ReconnectionProvider>()
             .AddScoped<IOrderManager, OrderManager>();
-
     }
 
 
     private static IServiceCollection AddCommon(this IServiceCollection services)
     {
         return services
-               .AddSingleton<TokenAuthorization>()
-              .AddSingleton<ApiClient>()
-              .AddScoped<IInstrumentsProvider, InstrumentsProvider>()
-              .AddHostedService<UpdatingToken>();
+            .AddSingleton<TokenAuthorization>()
+            .AddSingleton<ApiClient>()
+            .AddScoped<IInstrumentsProvider, InstrumentsProvider>()
+            .AddHostedService<UpdatingToken>();
     }
 }

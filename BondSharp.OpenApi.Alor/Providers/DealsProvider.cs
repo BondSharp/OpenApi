@@ -6,7 +6,7 @@ using BondSharp.OpenApi.Alor.Data;
 using BondSharp.OpenApi.Core.AbstractServices;
 using Microsoft.AspNetCore.Http.Extensions;
 
-namespace BondSharp.OpenApi.Alor.Deals;
+namespace BondSharp.OpenApi.Alor.Providers;
 internal class DealsProvider(ApiClient apiClient) : IDealsProvider
 {
     public async IAsyncEnumerable<IDeal> GetPast(IInstrument instrument, DateTimeOffset? from, DateTimeOffset? to, int batchSize)
