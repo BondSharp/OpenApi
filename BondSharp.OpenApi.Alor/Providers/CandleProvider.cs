@@ -19,8 +19,8 @@ internal class CandleProvider(ApiClient apiClient) : ICandleProvider
             { "exchange", "MOEX" },
             { "format", "Slim" },
             { "tf", "W" },
-            { "from", toSeconds.ToString() },
-            { "to", fromSeconds.ToString() }
+            { "from", fromSeconds.ToString() },
+            { "to", toSeconds.ToString() }
         };
 
         var result = await apiClient.Get<Candles>("/md/v2/history", builder);

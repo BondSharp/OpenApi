@@ -7,6 +7,7 @@ using BondSharp.OpenApi.Alor.Orders;
 using BondSharp.OpenApi.Alor.Providers;
 using BondSharp.OpenApi.Alor.Subscriptions;
 using BondSharp.OpenApi.Core.AbstractServices;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
@@ -19,16 +20,19 @@ public static class ServiceRegistration
 
     public static IHostApplicationBuilder AddAlor(this IHostApplicationBuilder builder)
     {
-        var services = builder.Services;
-        var config = builder.Configuration.GetSection(configKey);
-        services
+        builder.Services.AddAlor(builder.Configuration);
+        return builder;
+    }
+
+    public static IServiceCollection AddAlor(this IServiceCollection services, IConfiguration configuration)
+    {
+        var config = configuration.GetSection(configKey);
+        return services
             .Configure<Settings>(config)
             .AddSingleton<Settings>(provider => provider.GetRequiredService<IOptions<Settings>>().Value)
             .AddCommon()
             .AddSubscriptions()
             .AddProviers();
-
-        return builder;
     }
 
     private static IServiceCollection AddProviers(this IServiceCollection services)
